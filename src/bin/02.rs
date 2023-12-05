@@ -2,9 +2,9 @@ advent_of_code::solution!(2);
 
 #[derive(Debug, Default)]
 struct GameTurn {
-    red: usize,
-    green: usize,
-    blue: usize,
+    red: u32,
+    green: u32,
+    blue: u32,
 }
 
 impl GameTurn {
@@ -15,25 +15,26 @@ impl GameTurn {
 
 pub fn part_one(input: &str) -> Option<u32> {
     let mut valid_turns: u32 = 0;
+    let mut games_list: Vec<Vec<GameTurn>> = Vec::new();
+
     let lines = input.split("\n").collect::<Vec<_>>();
     for line in lines {
         if line.is_empty() {
             continue;
         }
 
-        let (game_id, turns) = line.split_once(": ").unwrap();
-        let (_, game_index) = game_id.split_once(" ").unwrap();
-        let game_index: u32 = game_index.parse().unwrap();
+        let (_, turns) = line.split_once(": ").unwrap();
+
+        let mut game_turn_list = Vec::new();
 
         let turns = turns.split("; ").collect::<Vec<_>>();
-
         for turn in turns {
             let cubes = turn.split(", ").collect::<Vec<_>>();
             let mut game_turn = GameTurn::default();
 
             for cube in cubes {
                 let (amount, color) = cube.split_once(' ').unwrap();
-                let amount: usize = amount.parse().unwrap();
+                let amount: u32 = amount.parse().unwrap();
 
                 match color {
                     "red" => game_turn.red = amount,
@@ -42,13 +43,20 @@ pub fn part_one(input: &str) -> Option<u32> {
                     _ => panic!("Nope"),
                 }
             }
+            game_turn_list.push(game_turn);
+        }
+        games_list.push(game_turn_list);
+    }
 
-            if game_turn.is_turn_valid() {
-                dbg!(&game_index);
-                valid_turns += (game_index + 1);
+    'next_game: for (index, game) in games_list.iter().enumerate() {
+        for turn in game {
+            if !turn.is_turn_valid() {
+                continue 'next_game;
             }
         }
+        valid_turns += u32::try_from(index).unwrap() + 1;
     }
+
     Some(valid_turns)
 }
 
