@@ -1,63 +1,77 @@
 advent_of_code::solution!(2);
+use std::{collections::BTreeMap, ops::Not};
 
-#[derive(Debug, Default)]
-struct GameTurn {
-    red: u32,
-    green: u32,
-    blue: u32,
+use nom::{
+    bytes::complete::tag,
+    character::complete::{self, alpha1, digit1, line_ending},
+    multi::separated_list1,
+    sequence::{preceded, separated_pair},
+    IResult,
+};
+
+#[derive(Debug)]
+struct Cube<'a> {
+    color: &'a str,
+    amount: u32,
 }
 
-impl GameTurn {
-    fn is_turn_valid(&self) -> bool {
-        self.red <= 12 && self.green <= 13 && self.red <= 14
+#[derive(Debug)]
+struct Game<'a> {
+    id: &'a str,
+    rounds: Vec<Vec<Cube<'a>>>,
+}
+
+impl<'a> Game<'a> {
+    fn valid_for_cube_set(&self, map: &BTreeMap<&str, u32>) -> Option<u32> {
+        self.rounds
+            .iter()
+            .any(|round| {
+                round.iter().any(|shown_cube| {
+                    shown_cube.amount > *map.get(shown_cube.color).expect("a valid cube")
+                })
+            })
+            .not()
+            .then_some(
+                self.id
+                    .parse::<u32>()
+                    .expect("game id should a parsable u32"),
+            )
     }
+}
+
+fn cube(input: &str) -> IResult<&str, Cube> {
+    let (input, (amount, color)) = separated_pair(complete::u32, tag(" "), alpha1)(input)?;
+    Ok((input, Cube { color, amount }))
+}
+
+fn round(input: &str) -> IResult<&str, Vec<Cube>> {
+    let (input, cubes) = separated_list1(tag(", "), cube)(input)?;
+    Ok((input, cubes))
+}
+
+fn game(input: &str) -> IResult<&str, Game> {
+    let (input, id) = preceded(tag("Game "), digit1)(input)?;
+    let (input, rounds) = preceded(tag(": "), separated_list1(tag("; "), round))(input)?;
+
+    Ok((input, Game { rounds, id }))
+}
+
+fn parse_games(input: &str) -> IResult<&str, Vec<Game>> {
+    let (input, games) = separated_list1(line_ending, game)(input)?;
+    Ok((input, games))
 }
 
 pub fn part_one(input: &str) -> Option<u32> {
-    let mut valid_turns: u32 = 0;
-    let mut games_list: Vec<Vec<GameTurn>> = Vec::new();
+    let map = BTreeMap::from([("red", 12), ("green", 13), ("blue", 14)]);
+    let games = parse_games(input).expect("should parse games");
 
-    let lines = input.split("\n").collect::<Vec<_>>();
-    for line in lines {
-        if line.is_empty() {
-            continue;
-        }
-
-        let (_, turns) = line.split_once(": ").unwrap();
-
-        let mut game_turn_list = Vec::new();
-
-        let turns = turns.split("; ").collect::<Vec<_>>();
-        for turn in turns {
-            let cubes = turn.split(", ").collect::<Vec<_>>();
-            let mut game_turn = GameTurn::default();
-
-            for cube in cubes {
-                let (amount, color) = cube.split_once(' ').unwrap();
-                let amount: u32 = amount.parse().unwrap();
-
-                match color {
-                    "red" => game_turn.red = amount,
-                    "green" => game_turn.green = amount,
-                    "blue" => game_turn.blue = amount,
-                    _ => panic!("Nope"),
-                }
-            }
-            game_turn_list.push(game_turn);
-        }
-        games_list.push(game_turn_list);
-    }
-
-    'next_game: for (index, game) in games_list.iter().enumerate() {
-        for turn in game {
-            if !turn.is_turn_valid() {
-                continue 'next_game;
-            }
-        }
-        valid_turns += u32::try_from(index).unwrap() + 1;
-    }
-
-    Some(valid_turns)
+    Some(
+        games
+            .1
+            .iter()
+            .filter_map(|game| game.valid_for_cube_set(&map))
+            .sum::<u32>(),
+    )
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
