@@ -1,31 +1,12 @@
 use std::u32;
 
-use itertools::{enumerate, Itertools};
-use nom::ParseTo;
+use itertools::Itertools;
 
 advent_of_code::solution!(6);
 
 // Determine the optimal holding time to maximize the travel distance
 // If achieved distance is <= than the record, just discard
 // Multiply count of possible permutations with count of each race
-
-fn max_distance(input: &str) -> u32 {
-    let race_time = input.parse::<u32>().unwrap();
-
-    // for index from 0 to race_time
-    // 1. find the distance at that time
-
-    let mut distance = 0;
-
-    for index in 0..race_time {
-        let rem_time = race_time - index;
-        let max_speed = index;
-
-        distance = rem_time * max_speed;
-    }
-
-    distance
-}
 
 fn valid_race_count(race_time: u32, race_distance_record: u32) -> u32 {
     let mut valid_races = 0;
