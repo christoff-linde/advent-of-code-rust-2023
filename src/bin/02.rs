@@ -37,6 +37,24 @@ impl<'a> Game<'a> {
                     .expect("game id should a parsable u32"),
             )
     }
+
+    fn minimum_cube_set(&self) -> u32 {
+        let map: BTreeMap<&str, u32> = BTreeMap::new();
+        self.rounds
+            .iter()
+            .fold(map, |mut acc, round| {
+                for cube in round.iter() {
+                    acc.entry(cube.color)
+                        .and_modify(|v| {
+                            *v = (*v).max(cube.amount);
+                        })
+                        .or_insert(cube.amount);
+                }
+                acc
+            })
+            .values()
+            .product()
+    }
 }
 
 fn cube(input: &str) -> IResult<&str, Cube> {
@@ -75,7 +93,14 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    None
+    let games = parse_games(input).expect("should parse games");
+    Some(
+        games
+            .1
+            .iter()
+            .map(|game| game.minimum_cube_set())
+            .sum::<u32>(),
+    )
 }
 
 #[cfg(test)]
