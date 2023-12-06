@@ -22,8 +22,6 @@ fn max_distance(input: &str) -> u32 {
         let max_speed = index;
 
         distance = rem_time * max_speed;
-
-        dbg!(distance);
     }
 
     distance
@@ -51,12 +49,10 @@ pub fn part_one(input: &str) -> Option<u32> {
     let first_line = lines.next().unwrap();
     let (_, races) = first_line.split_once(": ").unwrap();
     let races = races.split_whitespace().collect_vec();
-    dbg!(&races);
 
     let second_line = lines.next().unwrap();
     let (_, distances) = second_line.split_once(": ").unwrap();
     let distances = distances.split_whitespace().collect_vec();
-    dbg!(&distances);
 
     let mut possible_combinations = Vec::new();
     // iterate over both distances and races vectors
@@ -73,7 +69,32 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    None
+    // read only first line of input
+    let mut lines = input.lines();
+    let first_line = lines.next().unwrap();
+
+    let (_, races) = first_line.split_once(": ").unwrap();
+
+    let races = races.split_whitespace().collect_vec();
+    let joined_races = races.join("").parse::<u64>().unwrap();
+
+    let second_line = lines.next().unwrap();
+    let (_, distances) = second_line.split_once(": ").unwrap();
+    let distances = distances.split_whitespace().collect_vec();
+    let joined_distances = distances.join("").parse::<u64>().unwrap();
+
+    let mut valid_race_count = 0;
+    for index in 0..joined_races {
+        let rem_time = joined_races - index;
+        let max_speed = index;
+
+        let distance = rem_time * max_speed;
+        if distance > joined_distances {
+            valid_race_count += 1;
+        }
+    }
+
+    Some(valid_race_count)
 }
 
 #[cfg(test)]
@@ -89,6 +110,6 @@ mod tests {
     #[test]
     fn test_part_two() {
         let result = part_two(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, None);
+        assert_eq!(result, Some(71503));
     }
 }
