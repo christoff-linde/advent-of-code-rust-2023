@@ -5,25 +5,7 @@
 Solutions for [Advent of Code](https://adventofcode.com/) in [Rust](https://www.rust-lang.org/).
 
 <!--- advent_readme_stars table --->
-## 2023 Results
 
-| Day | Part 1 | Part 2 |
-| :---: | :---: | :---: |
-| [Day 1](https://adventofcode.com/2023/day/1) | ⭐ | ⭐ |
-| [Day 2](https://adventofcode.com/2023/day/2) | ⭐ | ⭐ |
-| [Day 6](https://adventofcode.com/2023/day/6) | ⭐ | ⭐ |
-<!--- advent_readme_stars table --->
-
-<!--- benchmarking table --->
-## Benchmarks
-
-| Day | Part 1 | Part 2 |
-| :---: | :---: | :---:  |
-| [Day 1](./src/bin/01.rs) | `31.5µs` | `143.8µs` |
-| [Day 2](./src/bin/02.rs) | `54.5µs` | `86.1µs` |
-| [Day 6](./src/bin/06.rs) | `549.0ns` | `14.6ms` |
-
-**Total: 14.92ms**
 <!--- benchmarking table --->
 
 ---
@@ -32,14 +14,14 @@ Solutions for [Advent of Code](https://adventofcode.com/) in [Rust](https://www.
 
 This template supports all major OS (macOS, Linux, Windows).
 
-### Create your repository 📝
+###  📝 Create your repository
 
 1.  Open [the template repository](https://github.com/fspoettel/advent-of-code-rust) on Github.
 2.  Click [Use this template](https://github.com/fspoettel/advent-of-code-rust/generate) and create your repository.
 3.  Clone your repository to your computer.
 4.  If you are solving a previous year's advent of code, change the `AOC_YEAR` variable in `.cargo/config.toml` to reflect the year you are solving.
 
-### Setup rust 💻
+### 💻 Setup rust
 
 1.  Install the [Rust toolchain](https://www.rust-lang.org/tools/install).
 2.  (recommended) Install the [rust-analyzer](https://rust-analyzer.github.io/manual.html) extension for your code editor.
@@ -51,7 +33,7 @@ This template supports all major OS (macOS, Linux, Windows).
 
 ## Usage
 
-### Scaffold a day
+### ➡️ Scaffold a day
 
 ```sh
 # example: `cargo scaffold 1`
@@ -67,18 +49,17 @@ cargo scaffold <day>
 
 Individual solutions live in the `./src/bin/` directory as separate binaries. _Inputs_ and _examples_ live in the the `./data` directory.
 
-Every [solution](https://github.com/fspoettel/advent-of-code-rust/blob/main/src/template/commands/scaffold.rs#L9-L35) has _tests_ referencing its _example_ file in `./data/examples`. Use these tests to develop and debug your solutions against the example input.
+Every [solution](https://github.com/fspoettel/advent-of-code-rust/blob/main/src/template.txt) has _tests_ referencing its _example_ file in `./data/examples`. Use these tests to develop and debug your solutions against the example input. In VS Code, `rust-analyzer` will display buttons for running / debugging these unit tests above the unit test blocks.
 
 > [!TIP]
 > If a day has different example inputs for both parts, you can use the `read_file_part()` helper in your tests instead of `read_file()`. For example, if this applies to day 1, you can create a second example file `01-2.txt` and invoke the helper like `let result = part_two(&advent_of_code::template::read_file_part("examples", DAY, 2));` to read it in `test_part_two`.
 
-> [!TIP]
-> when editing a solution, `rust-analyzer` will display buttons for running / debugging unit tests above the unit test blocks.
-
-### Download input & description for a day
+### ➡️ Download input for a day
 
 > [!IMPORTANT] 
-> This command requires [installing the aoc-cli crate](#configure-aoc-cli-integration).
+> This requires [installing the aoc-cli crate](#configure-aoc-cli-integration).
+
+You can automatically download puzzle input and description by either appending the `--download` flag to `scaffold` (e.g. `cargo scaffold 4 --download`) or with the separate `download` command:
 
 ```sh
 # example: `cargo download 1`
@@ -93,7 +74,7 @@ cargo download <day>
 # 🎄 Successfully wrote puzzle to "data/puzzles/01.md".
 ```
 
-### Run solutions for a day
+### ➡️ Run solutions for a day
 
 ```sh
 # example: `cargo solve 01`
@@ -115,11 +96,11 @@ For example, running a benchmarked, optimized execution of day 1 would look like
 #### Submitting solutions
 
 > [!IMPORTANT]
-> This command requires [installing the aoc-cli crate](#configure-aoc-cli-integration).
+> This requires [installing the aoc-cli crate](#configure-aoc-cli-integration).
 
 In order to submit part of a solution for checking, append the `--submit <part>` option to the `solve` command.
 
-### Run all solutions
+### ➡️ Run all solutions
 
 ```sh
 cargo all
@@ -135,15 +116,17 @@ cargo all
 # Total: 0.20ms
 ```
 
-This runs all solutions sequentially and prints output to the command-line. Same as for the `solve` command, the `--release` flag runs an optimized build.
+This runs all solutions sequentially and prints output to the command-line. Same as for the `solve` command, the `--release` flag runs an optimized build and the `--time` flag outputs benchmarks.
 
-#### Update readme benchmarks
+### ➡️ Update readme benchmarks
 
-The template can output a table with solution times to your readme. In order to generate a benchmarking table, run `cargo all --release --time`. If everything goes well, the command will output "_Successfully updated README with benchmarks._" after the execution finishes and the readme will be updated.
+The template can write benchmark times to the README via the `cargo time` command.
 
-Please note that these are not "scientific" benchmarks, understand them as a fun approximation. 😉 Timings, especially in the microseconds range, might change a bit between invocations.
+By default, this command checks for missing benchmarks, runs those solutions, and then updates the table. If you want to (re-)time all solutions, run `cargo time --all`. If you want to (re-)time one specific solution, run `cargo time <day>`.
 
-### Run all tests
+Please note that these are not _scientific_ benchmarks, understand them as a fun approximation. 😉 Timings, especially in the microseconds range, might change a bit between invocations.
+
+### ➡️ Run all tests
 
 ```sh
 cargo test
@@ -151,19 +134,19 @@ cargo test
 
 To run tests for a specific day, append `--bin <day>`, e.g. `cargo test --bin 01`. You can further scope it down to a specific part, e.g. `cargo test --bin 01 part_one`.
 
-### Format code
+### ➡️ Format code
 
 ```sh
 cargo fmt
 ```
 
-### Lint code
+### ➡️ Lint code
 
 ```sh
 cargo clippy
 ```
 
-### Read puzzle description in terminal
+### ➡️ Read puzzle description
 
 > [!IMPORTANT]
 > This command requires [installing the aoc-cli crate](#configure-aoc-cli-integration).
@@ -173,6 +156,41 @@ cargo clippy
 cargo read <day>
 
 # output:
+# Loaded session cookie from "/Users/<snip>/.adventofcode.session".
+# Fetching puzzle for day 1, 2022...
+# ...the input...
+```
+
+### ➡️ Scaffold, download & read the current aoc day
+
+> [!IMPORTANT]
+> This command requires [installing the aoc-cli crate](#configure-aoc-cli-integration).
+
+During december, the `today` shorthand command can be used to:
+
+ - scaffold a solution for the current day
+ - download its input
+ - and read the puzzle
+
+in one go.
+
+```sh
+# example: `cargo today` on December 1st
+cargo today
+
+# output:
+# Created module file "src/bin/01.rs"
+# Created empty input file "data/inputs/01.txt"
+# Created empty example file "data/examples/01.txt"
+# ---
+# 🎄 Type `cargo solve 01` to run your solution.
+# [INFO  aoc] 🎄 aoc-cli - Advent of Code command-line tool
+# [INFO  aoc_client] 🎅 Saved puzzle to 'data/puzzles/01.md'
+# [INFO  aoc_client] 🎅 Saved input to 'data/inputs/01.txt'
+# ---
+# 🎄 Successfully wrote input to "data/inputs/01.txt".
+# 🎄 Successfully wrote puzzle to "data/puzzles/01.md".
+#
 # Loaded session cookie from "/Users/<snip>/.adventofcode.session".
 # Fetching puzzle for day 1, 2022...
 # ...the input...
@@ -214,6 +232,26 @@ Go to the _Variables_ tab in your repository settings and create the following v
 ### Check code formatting / clippy lints in CI
 
 Uncomment the respective sections in the `ci.yml` workflow.
+
+### Use DHAT to profile heap allocations
+
+If you are not only interested in the runtime of your solution, but also its memory allocation profile, you can use the template's [DHAT](https://valgrind.org/docs/manual/dh-manual.html) integration to analyze it. In order to activate DHAT, call the `solve` command with the `--dhat` flag.
+
+```sh
+cargo solve 1 --dhat
+
+# output:
+#     Running `target/dhat/1`
+# dhat: Total:     276 bytes in 3 blocks
+# dhat: At t-gmax: 232 bytes in 2 blocks
+# dhat: At t-end:  0 bytes in 0 blocks
+# dhat: The data has been saved to dhat-heap.json, and is viewable with dhat/dh_view.html
+# Part 1: 9001 (4.1ms)
+```
+
+The command will output some basic stats to the command-line and generate a `dhat-heap.json` report in the repo root directory.
+
+You can pass the report a tool like [dh-view](https://nnethercote.github.io/dh_view/dh_view.html) to view a detailed breakdown of heap allocations.
 
 ### Use VS Code to debug your code
 
