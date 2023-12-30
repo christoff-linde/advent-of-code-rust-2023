@@ -1,12 +1,11 @@
 use std::collections::BTreeMap;
 
-use itertools::Itertools;
 use nom::{
     branch::alt,
     bytes::complete::tag,
     character::complete::{self, alpha1, line_ending, multispace1},
     combinator::eof,
-    multi::{fold_many1, many1, separated_list1},
+    multi::{fold_many1, many1},
     sequence::{delimited, separated_pair, terminated},
     IResult, Parser,
 };
@@ -19,6 +18,7 @@ enum Direction {
     Right,
 }
 
+#[allow(clippy::type_complexity)]
 fn parser(input: &str) -> IResult<&str, (Vec<Direction>, BTreeMap<&str, (&str, &str)>)> {
     let (input, instructions) = many1(alt((
         complete::char('R').map(|_| Direction::Right),
@@ -49,7 +49,7 @@ fn parser(input: &str) -> IResult<&str, (Vec<Direction>, BTreeMap<&str, (&str, &
 }
 
 pub fn part_one(input: &str) -> Option<u32> {
-    let (input, (instructions, map)) = parser(input).expect("should validly parse");
+    let (_input, (instructions, map)) = parser(input).expect("should validly parse");
 
     let mut current_node = "AAA";
     let Some(step_count) =
@@ -77,7 +77,7 @@ pub fn part_one(input: &str) -> Option<u32> {
     Some(step_count as u32)
 }
 
-pub fn part_two(input: &str) -> Option<u32> {
+pub fn part_two(_input: &str) -> Option<u32> {
     None
 }
 
