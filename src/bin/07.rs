@@ -1,6 +1,6 @@
 use std::ops::Deref;
 
-use itertools::Itertools;
+use itertools::{Itertools, Position};
 use nom::IResult;
 
 advent_of_code::solution!(7);
@@ -32,14 +32,43 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    None
+    let hands = input
+        .lines()
+        .map(|line| {
+            let (hand, bid) = line.split_once(' ').unwrap();
+            (hand, bid.parse::<u32>().unwrap(), score_hand(hand))
+        })
+        .sorted_by_key(|x| (x.2 .0 as u8, x.2 .1))
+        .enumerate()
+        .map(|(index, (_hand, bid, _))| (index as u32 + 1) * bid)
+        .sum::<u32>();
+    Some(hands)
 }
 
 fn score_hand(hand: &str) -> (HandType, (u32, u32, u32, u32, u32)) {
     use HandType::*;
 
     let counts = hand.chars().counts();
-    let values = counts.values().sorted().join("");
+
+    let values = if let Some(joker_count) = counts.get(&'J') {
+        if *joker_count == 5 {
+            "5".to_string()
+        } else {
+            counts
+                .iter()
+                .filter_map(|(key, value)| (key != &'J').then_some(value))
+                .sorted()
+                .with_position()
+                .map(|(position, value)| match position {
+                    Position::Last | Position::Only => value + joker_count,
+                    _ => *value,
+                })
+                .join("")
+        }
+    } else {
+        counts.values().sorted().join("")
+    };
+
     let hand_type = match values.deref() {
         "5" => FiveOfAKind,
         "14" => FourOfAKind,
@@ -56,16 +85,14 @@ fn score_hand(hand: &str) -> (HandType, (u32, u32, u32, u32, u32)) {
             'A' => 14,
             'K' => 13,
             'Q' => 12,
-            'J' => 11,
+            'J' => 1,
             'T' => 10,
             value => value.to_digit(10).unwrap(),
         })
         .collect_tuple()
         .unwrap();
-
     (hand_type, card_scores)
 }
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -79,6 +106,6 @@ mod tests {
     #[test]
     fn test_part_two() {
         let result = part_two(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, None);
+        assert_eq!(result, Some(5905));
     }
 }
